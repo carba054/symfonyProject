@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container body-content">
+        <div class="row">
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if type == 'warning' %}warning{% else %}success{% endif %}" id="info">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <table id="reportView" class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Rounds</th>
+                    <th scope="col">Reviews</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th>Round 1:</th>
+                    <td>{{ report.round1 }}</td>
+                </tr>
+                <tr>
+                    <th>Round 2:</th>
+                    <td>{{ report.round2 }}</td>
+                </tr>
+                <tr>
+                    <th>Round 3:</th>
+                    <td>{{ report.round3 }}</td>
+                </tr>
+                <tr>
+                    <th>Round 4:</th>
+                    <td>{{ report.round4 }}</td>
+                </tr>
+                <tr>
+                    <th>Round 5:</th>
+                    <td>{{ report.round5 }}</td>
+                </tr>
+                <tr>
+                    <th>Round 6:</th>
+                    <td>{{ report.round6 }}</td>
+                </tr>
+                <tr>
+                    <th>Round 7:</th>
+                    <td>{{ report.round7 }}</td>
+                </tr>
+                <tr>
+                    <th>Winner :</th>
+                    <td>{% if report.winner is not null and report.winner == report.attackerId.id %}The winner is {{ report.attackerId.name }}!{% elseif report.winner == report.defenderId.id %}The winner is {{ report.defenderId.name }}!{% else %}There is no winner!{% endif %}</td>
+                </tr>
+
+                </tbody>
+            </table>
+
+            <footer>
+                <div class="pull-left" style="border:1px solid black; padding: 20px; border-radius: 20%; box-shadow: 5px 10px #888888; margin: 50px 0px 0px 35%;">
+                    <a class="btn btn-success btn-xs" style="margin-right: 40px" href="{{ path('all_reports') }}">Show All Reports &raquo;</a>
+                    <a class="btn btn-default btn-xs" href="{{ app.request.headers.get('referer') }}">Back &raquo;</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+{% endblock %}
+

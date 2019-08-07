@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+    <h1>Email: {{ user.email }}</h1>
+    <h1>Full Name: {{ user.fullName }}</h1>
+    <h1>Hero: {% if user.hero == true %}<a class="btn btn-default" href="{{ path('my_hero') }}">View</a>{% else %}<a class="btn btn-default" href="{{ path('hero_create') }}">Create</a> {% endif %}</h1>
+    <footer>
+        <div class="pull-right">
+            <a class="btn btn-success btn-xs" href="{{ path('edit') }}">Edit &raquo;</a>
+{#            <a class="btn btn-danger btn-xs" href="{{ path('users_delete',{id: hero.id}) }}">Delite &raquo;</a>#}
+            <a class="btn btn-default btn-xs" href="{{ app.request.headers.get('referer') }}">back &raquo;</a>
+        </div>
+    </footer>
+{% endblock %}

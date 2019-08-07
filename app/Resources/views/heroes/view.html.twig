@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <div class="container body-content">
+        <div class="row">
+            <div class="col-md-6">
+                <article>
+                    <img src="{{ hero.typeId.img }}" width="400px" height="200px">
+                    <h2>
+                        level:{{ hero.level }}
+                    </h2>
+
+                        <div class="progress" style="width: 400px">
+                            <div class="progress-bar" role="progressbar" style="width: {{ progress }}%; color: {% if progress > 0 %}yellowgreen {% else %}red {% endif %}">{{ progress }}%</div>
+                        </div>
+
+                    <h2>
+                        Name:{{ hero.name }}</h2>
+                    <h2>
+                        Type:{{ hero.typeId.name }}
+                    </h2>
+
+                    <h2>
+                        Magics:
+                        {% for magic in magics %}
+                            <img src="{{ magic.img }}" width="50px" height="50px">
+                        {% endfor %}
+                    </h2>
+
+
+                    <h2>
+                        Strength: {{ hero.strength }}
+                    </h2>
+                    <h2>
+                        Agility: {{ hero.agility }}
+                    </h2>
+                    <h2>
+                        Intelligence: {{ hero.intelligence }}
+                    </h2>
+                    <h2>
+                        Luck: {{ hero.luck }}
+                    </h2>
+                    <h2>
+                        Health: {{ hero.maxHealth }}
+                    </h2>
+
+                    <small class="owner">
+                        Owner:{{ hero.ownerId.fullName }}
+                    </small>
+
+                    <footer>
+                        <div class="pull-right">
+                            {% if app.getUser() and (app.getUser().isOwner(hero) or app.getUser.isAdmin())%}
+
+                            <a class="btn btn-success btn-xs" href="{{ path('my_hero')}}">My Hero &raquo;</a>
+                            {% endif %}
+
+                            {% if app.getUser.isAdmin() %}
+                            <a class="btn btn-warning btn-xs" href="{{ path('hero_delete',{id: hero.id}) }}">Delite &raquo;</a>
+                            {% endif %}
+                            <a class="btn btn-default btn-xs" href="{{ path('blog_index') }}">back &raquo;</a>
+
+                        </div>
+                    </footer>
+                </article>
+            </div>
+            <div class="col-md-6" >
+                <h2>Wins: {{ hero.wins }}</h2>
+                <h2>losses: {{ hero.losses }}</h2>
+                <h2>Draws: {{ hero.draws }}</h2>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container body-content">
+        <div class="row">
+
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if type == 'warning' %}warning{% else %}success{% endif %}" id="info">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th colspan="8" style="text-align: center"><h1>Ranks</h1></th>
+
+                </tr>
+                <tr>
+                    <th scope="col">Sorted By:</th>
+                    <th scope="col"><a style="width: 150px"  href="{% if "/sort/name/1" in url %}{{ path('sort',{by:'name',top:'0'}) }}{% else %}{{ path('sort',{by:'name',top:'1'}) }}{% endif %}">Hero Name</a></th>
+                    <th scope="col"><a style="width: 150px"  href="{% if "/sort/level/1" in url %}{{ path('sort',{by:'level',top:'0'}) }}{% else %}{{ path('sort',{by:'level',top:'1'}) }}{% endif %}">Level</a></th>
+                    <th scope="col"><a style="width: 150px"  href="{% if "/sort/viewCount/1" in url %}{{ path('sort',{by:'viewCount',top:'0'}) }}{% else %}{{ path('sort',{by:'viewCount',top:'1'}) }}{% endif %}">Views</a></th>
+                    <th scope="col"><a style="width: 150px"  href="{% if "/sort/wins/1" in url %}{{ path('sort',{by:'wins',top:'0'}) }}{% else %}{{ path('sort',{by:'wins',top:'1'}) }}{% endif %}">Wins</a></th>
+                    <th scope="col"><a style="width: 150px"  href="{% if "/sort/losses/1" in url %}{{ path('sort',{by:'losses',top:'0'}) }}{% else %}{{ path('sort',{by:'losses',top:'1'}) }}{% endif %}">Losses</a></th>
+                    <th scope="col"><a style="width: 150px"  href="{% if "/sort/draws/1" in url %}{{ path('sort',{by:'draws',top:'0'}) }}{% else %}{{ path('sort',{by:'draws',top:'1'}) }}{% endif %}">Draws</a></th>
+                    <th scope="col"><a style="width: 150px"  href="{% if "/sort/dateAdded/1" in url %}{{ path('sort',{by:'dateAdded',top:'0'}) }}{% else %}{{ path('sort',{by:'dateAdded',top:'1'}) }}{% endif %}">Birthday</a></th>
+                </tr>
+                </thead>
+                <tbody>
+            {% for hero in heroes %}
+                {% set counter = ( counter | default(0) ) + 1 %}
+                    <tr {% if (app.user is not null) and  (hero.ownerId.id == app.user.id) %}style="background-color: deepskyblue" {% endif %}>
+                        <td>{{ counter }}</td>
+                        <td><a style="width: 150px" class="btn btn-default btn-xs" href="{{ path('hero_view',{id:hero.id}) }}">{{ hero.name }}</a></td>
+                        <td>{{ hero.level }}</td>
+                        <td>{{ hero.viewCount }}</td>
+                        <td>{{ hero.wins }}</td>
+                        <td>{{ hero.losses }}</td>
+                        <td>{{ hero.draws }}</td>
+                        <td>{{ hero.dateAdded|date("F jS \\a\\t g:ia") }}</td>
+                        <td>{% if (app.user is not null) and (app.user.hero == true) and (hero.ownerId.id != app.user.id) %}<form action="{{ path('hero_attack') }}" method="POST"><input name="{{ hero.id }}" type="submit" value="Attack"></form>{% endif %}</td>
+
+                    </tr>
+
+            {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+

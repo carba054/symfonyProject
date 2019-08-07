@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <form class="form-horizontal" action="{{ path('my_hero') }}" method="POST">
+    <div class="container body-content">
+        <div class="row">
+            <div class="col-md-6">
+                <article>
+                    {% for type, messages in app.session.flashbag.all() %}
+                        {% for message in messages %}
+                            <div class="alert alert-{% if type == 'warning' %}warning{% else %}success{% endif %}" id="info">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    <img src="{{ hero.typeId.img }}" width="400px" height="200px">
+                    <h2>
+                        level:{{ hero.level }}
+                    </h2>
+
+                    <div class="progress" style="width: 400px">
+                        <div class="progress-bar" role="progressbar" style="width: {{ progress }}%; color: {% if progress > 0 %}yellowgreen {% else %}red {% endif %}">{{ progress }}%</div>
+                    </div>
+
+                    <h2>
+                        Name:{{ hero.name }}</h2>
+                    <h2>
+                        Type:{{ hero.typeId.name }}
+                    </h2>
+
+                    <h2>
+                        Magics:
+                        {% for magic in magics %}
+                            <img src="{{ magic.img }}" width="50px" height="50px">
+                        {% endfor %}
+                    </h2>
+                    <h2>
+                        Money: <span class="money">{{ hero.money }}</span>
+                    </h2>
+
+
+                        <table class="table-bordered" style="width:50%; border-collapse: collapse;">
+                            <thead>
+                            <tr>
+                                <th>Strength:</th>
+                                <td class="str">{{ hero.strength }}</td>
+                                <td><input class="str" type="hidden" name="hero[str]" value="{{ hero.strength }}"><button onclick="byStats('str')" type="button">+</button> Cost:<span class="str">{{ hero.strength*3 }}</span></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Agility:</th>
+                                    <td class="agl">{{ hero.agility }}</td>
+                                    <td><input class="agl" type="hidden" name="hero[agl]" value="{{ hero.agility }}"><button onclick="byStats('agl')" type="button">+</button> Cost:<span class="agl">{{ hero.agility*3 }}</span></td>
+                                </tr>
+                                <tr>
+                                    <th>Intelligence:</th>
+                                    <td class="int">{{ hero.intelligence }}</td>
+                                    <td><input class="int" type="hidden" name="hero[int]" value="{{ hero.intelligence }}"><button onclick="byStats('int')" type="button">+</button> Cost:<span class="int">{{ hero.intelligence*3 }}</span></td>
+                                </tr>
+                                <tr>
+                                    <th>Luck:</th>
+                                    <td class="luck">{{ hero.luck }}</td>
+                                    <td><input class="luck" type="hidden" name="hero[luck]" value="{{ hero.luck }}"><button onclick="byStats('luck')" type="button">+</button> Cost:<span class="luck">{{ hero.luck*3 }}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+{#                        <span>#}
+{#                            Strength: {{ hero.strength }}#}
+{#                        </span>#}
+{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
+{#                        <span>#}
+{#                            Agility: {{ hero.agility }}#}
+{#                        </span>#}
+{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
+{#                        <span>#}
+{#                            Intelligence: {{ hero.intelligence }}#}
+{#                        </span>#}
+{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
+{#                        <span>#}
+{#                            Luck: {{ hero.luck }}#}
+{#                        </span>#}
+{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
+{#                        <span>#}
+{#                            Health: {{ hero.maxHealth }}#}
+{#                        </span>#}
+{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
+                        <small class="owner">
+                            Owner:{{ hero.ownerId.fullName }}
+                        </small>
+
+
+
+                </article>
+            </div>
+            <div class="col-md-6" >
+                <h2>Wins: {{ hero.wins }}</h2>
+                <h2>losses: {{ hero.losses }}</h2>
+                <h2>Draws: {{ hero.draws }}</h2><br>
+                <h2>Health:{{ hero.currentHealth }}</h2>
+                <progress style="height: 20px" max="{{ hero.maxHealth }}" value="{{ hero.currentHealth }}"></progress> <span style="font-size: 25px">{{ hero.maxHealth }}</span>
+                <h2>DMG: {{ hero.dmg }}</h2>
+                <h2>Armor: {{ hero.armor }}</h2>
+                <h2>Miss: {{ hero.miss }}</h2>
+                <h2>Disarm: {{ hero.disarm }}</h2>
+
+            </div>
+
+        </div>
+    </div>
+    <footer>
+        <div class="pull-left" style="border:1px solid black; padding: 20px; border-radius: 20%; box-shadow: 5px 10px #888888; margin: 50px 0px 0px 35%;">
+            {% if app.getUser() and (app.getUser().isOwner(hero) or app.getUser.isAdmin())%}
+                <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px">
+                <a class="btn btn-danger btn-xs" style="margin-right: 40px" href="{{ path('hero_delete',{id: hero.id}) }}">Delite &raquo;</a>
+            {% endif %}
+            <a class="btn btn-default btn-xs" href="{{ app.request.headers.get('referer') }}">back &raquo;</a>
+
+
+
+        </div>
+    </footer>
+    </form>
+{% endblock %}
+

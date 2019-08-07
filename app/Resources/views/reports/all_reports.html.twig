@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container body-content">
+        <div class="row">
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if type == 'warning' %}warning{% else %}success{% endif %}" id="info">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th colspan="5" style="text-align: center"><h1>Reports</h1></th>
+
+                </tr>
+                <tr>
+                    <th scope="col">Rounds</th>
+                    <th scope="col">Attacker Name</th>
+                    <th scope="col">Defender Name</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Show Details</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for report in reports %}
+
+                    {% set counter = ( counter | default(0) ) + 1 %}
+
+                    <tr>
+                        <td>{{ counter }}</td>
+                        <td><a style="width: 150px" class="btn btn-default btn-xs" href="{{ path('hero_view',{id:report.attackerId}) }}">{{ report.attackerName }}</a></td>
+                        <td><a style="width: 150px" class="btn btn-default btn-xs" href="{{ path('hero_view',{id:report.defenderId}) }}">{{ report.defenderName }}</a></td>
+                        <td>{{ report.date }}</td>
+                        <td><a style="width: 150px" class="btn btn-default btn-xs" href="{{ path('report',{id:report.id}) }}">Show</a></td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer>
+        <div class="pull-left" style="border:1px solid black; padding: 20px; border-radius: 20%; box-shadow: 5px 10px #888888; margin: 50px 0px 0px 35%;">
+            <a class="btn btn-default btn-xs" href="{{ app.request.headers.get('referer') }}">Back &raquo;</a>
+        </div>
+    </footer>
+
+{% endblock %}
+

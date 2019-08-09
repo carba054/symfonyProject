@@ -50,13 +50,16 @@ class HeroService implements HeroServiceInterface
 
     }
 
-    public function edit(Hero $hero, $arrRequest): bool
+    public function edit(Hero $hero, $arrRequest=null): bool
     {
-        $hero->setStrength($arrRequest['hero']['str']);
-        $hero->setAgility($arrRequest['hero']['agl']);
-        $hero->setIntelligence($arrRequest['hero']['int']);
-        $hero->setLuck($arrRequest['hero']['luck']);
-        $hero->setMoney($arrRequest['hero']['money']);
+        if ($arrRequest != null){
+            $hero->setStrength($arrRequest['hero']['str']);
+            $hero->setAgility($arrRequest['hero']['agl']);
+            $hero->setIntelligence($arrRequest['hero']['int']);
+            $hero->setLuck($arrRequest['hero']['luck']);
+            $hero->setMoney($arrRequest['hero']['money']);
+        }
+
         return $this->heroRepository->insert($hero);
     }
 
@@ -97,5 +100,10 @@ class HeroService implements HeroServiceInterface
     public function findReportsByDefenderId(int $id): ?array
     {
         return $this->reportService->findAllByDefenderId($id);
+    }
+
+    public function findAllDamagedHeroes()
+    {
+        return $this->heroRepository->findAllDamagedHeroes();
     }
 }

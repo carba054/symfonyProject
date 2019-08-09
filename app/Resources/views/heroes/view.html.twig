@@ -58,7 +58,7 @@
                             {% if app.getUser.isAdmin() %}
                             <a class="btn btn-warning btn-xs" href="{{ path('hero_delete',{id: hero.id}) }}">Delite &raquo;</a>
                             {% endif %}
-                            <a class="btn btn-default btn-xs" href="{{ path('blog_index') }}">back &raquo;</a>
+                            <a class="btn btn-default btn-xs" href="{{ app.request.headers.get('referer') }}">back &raquo;</a>
 
                         </div>
                     </footer>

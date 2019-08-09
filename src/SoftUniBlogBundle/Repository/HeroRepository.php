@@ -2,6 +2,7 @@
 
 namespace SoftUniBlogBundle\Repository;
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping;
 use Doctrine\ORM\OptimisticLockException;
@@ -50,6 +51,29 @@ class HeroRepository extends \Doctrine\ORM\EntityRepository
         } catch (OptimisticLockException $e) {
             return false;
         }
+
+    }
+
+    public function findAllDamagedHeroes()
+    {
+
+
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+        $statement = null;
+
+        try {
+            $statement = $connection->prepare("SELECT * FROM heroes
+                                                        WHERE currentHealth < maxHealth");
+        } catch (DBALException $e) {
+        }
+
+
+        $statement->execute();
+        $results = $statement->fetchAll();
+
+        return $results;
+
 
     }
 

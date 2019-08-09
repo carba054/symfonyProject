@@ -209,6 +209,10 @@ class HeroController extends Controller
         }
         $types = $this->typeService->findAll();
         $progress = $hero->getExperience()% 100;
+
+
+
+
         return $this->render("heroes/my_hero.html.twig", ['hero'=>$hero , 'types' => $types, 'progress' => $progress , 'magics' =>$magics]);
 
     }

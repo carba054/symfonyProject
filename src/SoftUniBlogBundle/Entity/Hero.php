@@ -354,7 +354,12 @@ class Hero
      */
     public function setCurrentHealth(int $currentHealth)
     {
-        $this->currentHealth = $currentHealth;
+        if ($currentHealth <= $this->getMaxHealth()){
+            $this->currentHealth = $currentHealth;
+        }else{
+            $this->currentHealth = $this->getMaxHealth();
+        }
+
         return $this;
     }
 

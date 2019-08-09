@@ -13,6 +13,22 @@
                     </div>
                 {% endfor %}
             {% endfor %}
+            <div class="col-md-4">
+                <h2>{{ report.attackerId.name }}:</h2>
+                <a href="{{ path('hero_view',{id:report.attackerId.id}) }}"><img style="width: 300px; height: 200px" src="{{ report.attackerId.typeId.img }}"></a>
+            </div>
+
+            <div class="col-md-4" style="text-align: center; height: 200px">
+                <h1 style="margin-top: 100px">VS</h1>
+            </div>
+
+
+            <div class="col-md-4">
+                <h2>{{ report.defenderId.name }}:</h2>
+                <a href="{{ path('hero_view',{id:report.defenderId.id}) }}"><img style="width: 300px; height: 200px" src="{{ report.defenderId.typeId.img }}"></a>
+            </div>
+
+
 
             <table id="reportView" class="table table-striped">
                 <thead>

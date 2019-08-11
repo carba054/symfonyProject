@@ -209,7 +209,7 @@ class UserController extends Controller
          * @var User $user
          */
         $user = $this->getUser();
-        if ($user->isAdmin()){
+        if (!$user->isAdmin()){
             return $this->redirectToRoute("blog_index");
 
         }

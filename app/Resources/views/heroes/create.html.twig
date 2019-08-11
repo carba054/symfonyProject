@@ -5,6 +5,16 @@
             <form class="form-horizontal" action="{{ path('hero_create') }}" method="POST">
 {#                {{ form_widget(form) }}#}
                 {{ form_row(form._token) }}
+                {% for type, messages in app.session.flashbag.all() %}
+                    {% for message in messages %}
+                        <div class="alert alert-warning" >
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
                 <fieldset>
                     <legend style="text-align: center">New Hero</legend>
 
@@ -24,7 +34,7 @@
 
                             {% for types in type %}
                                 <img class="type{{ types.id }} type" onclick="imgType({{ types.id }})" src="{{ types.img }}" width="200px" height="100px">
-                            <input class="type{{ types.id }} type hidden" type="radio" name="hero[typeId]" value="{{ types.id }}" >{{ types.name }}<br><br>
+                                <input class="type{{ types.id }} type hidden" type="radio" name="hero[typeId]" value="{{ types.id }}" >{{ types.name }}<br><br>
 
                             {% endfor %}
                             <button  type="button" onclick="createNext('name')" class="btn btn-primary">Back</button>
@@ -36,7 +46,7 @@
                         <label class="col-sm-4 control-label" for="hero_magic">Magics:</label>
                         <div class="col-sm-4 ">
                             {% for magics in magic %}
-                                <img class="magic{{ magics.id }} magic" onclick="imgMagic({{ magics.id }})" src="{{ magics.img }}" width="100px" height="50px">
+                                <img class="magic{{ magics.id }} magic" onclick="imgMagic({{ magics.id }})" src="{{ magics.img }} " width="128px" height="128px">
                                 <input class="magic{{ magics.id }} magic hidden" type="radio" name="hero[magics]" value="{{ magics.id }}" >{{ magics.name }}<br><br>
 
                             {% endfor %}

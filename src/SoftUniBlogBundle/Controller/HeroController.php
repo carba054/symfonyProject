@@ -76,14 +76,27 @@ class HeroController extends Controller
      */
     public function createProcess(Request $request)
     {
+
         $hero = new Hero();
         $form = $this->createForm(HeroType::class, $hero);
-        $form->handleRequest($request);
+        try{
+         $form->handleRequest($request);
+        }catch(\Exception $e){
+            $this->addFlash('warning', $e->getMessage());
+            return $this->redirectToRoute("hero_create");
+
+        }
         $arrRequest = $request->request->all();
+        if (!isset($arrRequest['hero']['typeId']) || !isset($arrRequest['hero']['magics'])){
+            $this->addFlash('warning', 'Please, choose magic and type');
+            return $this->redirectToRoute("hero_create");
+        }
         $type =$this->typeService->findOneById($arrRequest['hero']['typeId']);
         $magic =$this->magicService->findOneById($arrRequest['hero']['magics']);
         $hero->setTypeId($type);
         $hero->setMagics($magic);
+
+
         if($this->heroService->create($hero)){
             $this->addFlash('info', 'Create hero successfully');
             return $this->redirectToRoute("blog_index");
@@ -98,6 +111,7 @@ class HeroController extends Controller
     /**
      * @Route("hero/{id}", name="hero_view")
      * @param $id
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function view($id){
@@ -189,6 +203,7 @@ class HeroController extends Controller
 
     /**
      * @Route("/heroes/my_hero", name="my_hero", methods={"GET"})
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function showMyHero(){
@@ -211,8 +226,6 @@ class HeroController extends Controller
         $progress = $hero->getExperience()% 100;
 
 
-
-
         return $this->render("heroes/my_hero.html.twig", ['hero'=>$hero , 'types' => $types, 'progress' => $progress , 'magics' =>$magics]);
 
     }
@@ -220,6 +233,7 @@ class HeroController extends Controller
     /**
      * @Route("/heroes/my_hero", methods={"POST"})
      * @param Request $request
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function saveMyHero(Request $request){
@@ -279,6 +293,53 @@ class HeroController extends Controller
                 ->getRepository(Hero::class)
                 ->find($id);
         }
+
+    }
+
+
+
+    /**
+     * @Route("/magisc/cgoose_magic", name="choose_magic", methods={"GET"})
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     */
+    public function chooseMagic(){
+
+        /**
+         * @var Hero $hero
+         */
+        $hero = $this->currentHeroOrById();
+        $magics = $this->magicService->findUnusedMagics($hero->getId());
+        return $this->render("magics/choose_magic.html.twig", ['magics'=> $magics]);
+
+    }
+
+    /**
+     * @Route("/magisc/cgoose_magic",  methods={"POST"})
+     * @param Request $request
+     * @Security("is_granted('IS_AUTHENTICATED_FULLY')")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function chooseMagicProcess(Request $request){
+
+        /**
+         * @var Hero $hero
+         */
+        $hero = $this->currentHeroOrById();
+        $request = $request->request->all();
+        if (isset($request['submit']) && isset($request['hero']['magics'])){
+            $magic = $this->magicService->findOneById($request['hero']['magics']);
+
+            $hero->setMagics($magic);
+            if ($this->heroService->edit($hero)){
+                return $this->redirectToRoute("my_hero");
+            }
+        }
+
+        $this->addFlash('warning', 'Something is wrong, try again');
+        return $this->chooseMagic();
+
+
 
     }
 

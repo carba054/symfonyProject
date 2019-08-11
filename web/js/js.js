@@ -11,9 +11,9 @@ function imgType(type) {
 
 function imgMagic(magic) {
 
-    $('img.magic').not('.magic'+magic).css({"width": "100px", "height": "50px"});
+    $('img.magic').not('.magic'+magic).css({"width": "128px", "height": "128px"});
     $('input:radio.magic').attr('checked', false);
-    $('.magic'+magic).eq(0).css({"width": "200px", "height": "100px"});
+    $('.magic'+magic).eq(0).css({"width": "155px", "height": "155px"});
     $('.magic'+magic).eq(1).attr('checked', true);
 
 }
@@ -45,3 +45,24 @@ $( document ).ready(function() {
 });
 
 
+$(document).ready(function (e) {
+    
+    $("#type1").click(function(){
+       $(".type1").show();
+        $(".type0").hide()
+        $(".type0 input").attr('value', 0);
+
+    });
+    $("#type0").click(function(){
+        $(".type0").show();
+        $(".type1").hide()
+        $(".type1 input").attr('value', 0);
+    });
+
+
+});
+
+function myFunction() {
+    var popup = document.getElementById("myPopup");
+    popup.classList.toggle("show");
+}

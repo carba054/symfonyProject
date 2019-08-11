@@ -31,15 +31,15 @@ class Reports
 
     /**
      *@var Hero
-     * @ORM\ManyToOne(targetEntity="SoftUniBlogBundle\Entity\Hero", inversedBy="reportsAttack");
-     * @ORM\JoinColumn(name="attackerId", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="SoftUniBlogBundle\Entity\Hero", inversedBy="reportsAttack", cascade={"persist"});
+     * @ORM\JoinColumn(name="attackerId", referencedColumnName="id", onDelete="CASCADE")
      */
     private $attackerId;
 
     /**
      *@var Hero
-     * @ORM\ManyToOne(targetEntity="SoftUniBlogBundle\Entity\Hero", inversedBy="reportsDefend");
-     * @ORM\JoinColumn(name="defenderId", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="SoftUniBlogBundle\Entity\Hero", inversedBy="reportsDefend", cascade={"persist"});
+     * @ORM\JoinColumn(name="defenderId", referencedColumnName="id", onDelete="CASCADE")
      */
     private $defenderId;
 
@@ -87,18 +87,6 @@ class Reports
      */
     private $date;
 
-//    public function __construct($round1 =null,$round2=null, $round3=null,$round4=null,$round5=null,$round6=null,$round7=null,$attackerId=null,$defenderId=null)
-//    {
-//        $this->round1 = $round1;
-//        $this->round2 = $round2;
-//        $this->round3 = $round3;
-//        $this->round4 = $round4;
-//        $this->round5 = $round5;
-//        $this->round6 = $round6;
-//        $this->round7 = $round7;
-//        $this->attackerId= $attackerId;
-//        $this->defenderId = $defenderId;
-//    }
 
         public function __construct(array $reports)
         {

@@ -14,6 +14,7 @@ interface UserServiceInterface
     public function findOneById(int $id):?User;
     public function findOne(User $user):?User;
     public function currentUser():?User;
+    public function findAll();
 
 
 

@@ -14,6 +14,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Hero
 {
+    const HERO_NAME_MIN_LENGTH = 4;
+    const HERO_NAME_MAX_LENGTH = 20;
+
+
     /**
      * @var int
      *
@@ -33,54 +37,54 @@ class Hero
     /**
      * @var integer
      *
-     * @ORM\Column(name="maxHealth", type="integer")
+     * @ORM\Column(name="maxHealth", type="integer", options={"default" : 100})
      */
     private $maxHealth;
     /**
      * @var integer
-     * @ORM\Column(name="currentHealth", type="integer")
+     * @ORM\Column(name="currentHealth", type="integer", options={"default" : 100})
      */
     private $currentHealth;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="level", type="integer")
+     * @ORM\Column(name="level", type="integer", options={"default" : 1})
      */
     private $level;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="strength", type="integer")
+     * @ORM\Column(name="strength", type="integer", options={"default" : 20})
      */
     private $strength;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="agility", type="integer")
+     * @ORM\Column(name="agility", type="integer", options={"default" : 20})
      */
     private $agility;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="intelligence", type="integer")
+     * @ORM\Column(name="intelligence", type="integer", options={"default" : 20})
      */
     private $intelligence;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="luck", type="integer")
+     * @ORM\Column(name="luck", type="integer", options={"default" : 20})
      */
     private $luck;
 
     /**
      *
      * @var Types
-     * @ORM\ManyToOne(targetEntity="SoftUniBlogBundle\Entity\Types", inversedBy="heroes")
+     * @ORM\ManyToOne(targetEntity="SoftUniBlogBundle\Entity\Types", inversedBy="heroes", cascade={"persist"})
      * @ORM\JoinColumn(name="typeId", referencedColumnName="id")
      *
      */
@@ -89,7 +93,7 @@ class Hero
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\Magics")
+     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\Magics", cascade={"persist"})
      * @ORM\JoinTable(name="heroes_magics",
      *     joinColumns={@ORM\JoinColumn(name="hero_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="magic_id", referencedColumnName="id")})
@@ -115,21 +119,21 @@ class Hero
     /**
      * @var integer
      *
-     * @ORM\Column(name="weapon", type="integer")
+     * @ORM\Column(name="weapon", type="integer", nullable=true)
      */
     private $weapon;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="shield", type="integer")
+     * @ORM\Column(name="shield", type="integer", nullable=true)
      */
     private $shield;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="money", type="integer")
+     * @ORM\Column(name="money", type="integer", options={"default" : 500})
      */
     private $money;
 
@@ -144,7 +148,7 @@ class Hero
 
     /**
      * @var User
-     * @ORM\OneToOne(targetEntity="SoftUniBlogBundle\Entity\User", inversedBy="hero")
+     * @ORM\OneToOne(targetEntity="SoftUniBlogBundle\Entity\User", inversedBy="hero" , cascade={"persist"})
      * @ORM\JoinColumn(name="ownerId", referencedColumnName="id")
      */
 
@@ -152,7 +156,7 @@ class Hero
 
     /**
      * @var integer
-     * @ORM\Column(name="viewCount", type="integer")
+     * @ORM\Column(name="viewCount", type="integer" , options={"default" : 0})
      *
      */
     private $viewCount;
@@ -160,23 +164,23 @@ class Hero
 
     /**
      * @var integer
-     * @ORM\Column(name="wins", type="integer")
+     * @ORM\Column(name="wins", type="integer" , options={"default" : 0})
      */
     private $wins;
     /**
      * @var integer
-     * @ORM\Column(name="losses", type="integer")
+     * @ORM\Column(name="losses", type="integer", options={"default" : 0})
      */
     private $losses;
     /**
      * @var integer
-     * @ORM\Column(name="draws", type="integer")
+     * @ORM\Column(name="draws", type="integer", options={"default" : 0})
      */
     private $draws;
 
     /**
      * @var integer;
-     * @ORM\Column(name="experience", type="integer")
+     * @ORM\Column(name="experience", type="integer", options={"default" : 100})
      */
     private $experience;
 
@@ -188,19 +192,19 @@ class Hero
 
     /**
      * @var double
-     * @ORM\Column(name="disarm", type="decimal")
+     * @ORM\Column(name="bonusMoney", type="decimal", options={"default" : 0})
      */
-    private $disarm;
+    private $bonusMoney;
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="SoftUniBlogBundle\Entity\Reports", mappedBy="attackerId");
+     * @ORM\OneToMany(targetEntity="SoftUniBlogBundle\Entity\Reports", mappedBy="attackerId", cascade={"remove"});
      */
     private $reportsAttack;
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="SoftUniBlogBundle\Entity\Reports", mappedBy="defenderId");
+     * @ORM\OneToMany(targetEntity="SoftUniBlogBundle\Entity\Reports", mappedBy="defenderId", cascade={"remove"});
      */
     private $reportsDefend;
 
@@ -211,23 +215,17 @@ class Hero
         $this->magics = new ArrayCollection();
         $this->reportsAttack = new ArrayCollection();
         $this->reportsDefend = new ArrayCollection();
-        $this->level = 1;
+        $this->setExperience(100);
+        //$this->setLevel(1);
         $this->setStrength(20);
         $this->setAgility(20);
         $this->setIntelligence(20);
         $this->setLuck(20);
-
-
-
-        $this->weapon = 0;
-        $this->shield = 0;
         $this->setCurrentHealth(100);
         $this->setMoney(500);
         $this->wins = 0;
         $this->losses = 0;
         $this->draws = 0;
-        $this->experience = 100;
-
 
 
     }
@@ -306,17 +304,17 @@ class Hero
     /**
      * @return double
      */
-    public function getDisarm()
+    public function getBonusMoney()
     {
-        return $this->disarm;
+        return $this->bonusMoney;
     }
 
     /**
      * @return Hero
      */
-    public function setDisarm($disarm)
+    public function setBonusMoney($bonusMoney)
     {
-        $this->disarm = $disarm;
+        $this->bonusMoney = $bonusMoney;
         return $this;
     }
 
@@ -335,7 +333,11 @@ class Hero
      */
     public function setExperience(int $experience)
     {
-        $this->experience = $experience;
+        $this->experience += $experience;
+        $lvl =  floor($this->experience/100);
+        if ($this->getLevel() < $lvl){
+            $this->setLevel($lvl);
+        }
         return $this;
     }
 
@@ -384,9 +386,11 @@ class Hero
 
     /**
      * @return Hero
+
      */
     public function setMagics($magics)
     {
+
         $this->magics[] = $magics;
         return $this;
     }
@@ -445,9 +449,15 @@ class Hero
      * @param string $name
      *
      * @return Hero
+     * @throws \Exception
      */
     public function setName($name)
     {
+
+        if (strlen($name) < self::HERO_NAME_MIN_LENGTH || strlen($name) > self::HERO_NAME_MAX_LENGTH){
+            throw new \Exception('Hero name length must be between '.self::HERO_NAME_MIN_LENGTH.' and '.self::HERO_NAME_MAX_LENGTH.' symbols!');
+        }
+
         $this->name = $name;
 
         return $this;
@@ -648,8 +658,8 @@ class Hero
      */
     public function setLuck(int $luck)
     {
-        $disarm = $luck*0.25;
-        $this->setDisarm($disarm);
+        $bonusMoney = $luck*0.2;
+        $this->setBonusMoney($bonusMoney);
 
         $this->luck = $luck;
         return $this;

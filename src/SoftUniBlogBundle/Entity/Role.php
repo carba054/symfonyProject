@@ -15,7 +15,7 @@ class Role
 {
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\User", mappedBy="roles")
+     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\User", mappedBy="roles", cascade={"remove"})
      */
     private $users;
     /**

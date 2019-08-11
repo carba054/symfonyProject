@@ -29,11 +29,11 @@ class ReportRepository extends \Doctrine\ORM\EntityRepository
     }
     public function insert(Reports $reports){
 
+
         try {
             $this->_em->persist($reports);
 
             $this->_em->flush();
-
             return true;
         } catch (OptimisticLockException $e) {
 
@@ -53,13 +53,13 @@ class ReportRepository extends \Doctrine\ORM\EntityRepository
             $statement = $connection->prepare("SELECT r.*,h.name as attackerName,hr.name as defenderName FROM reports as r
                                                          INNER JOIN heroes as h on r.attackerId = h.id
                                                          INNER JOIN heroes as hr on r.defenderId = hr.id
-                                                         WHERE r.attackerId = :id ORDER BY r.date DESC");
+                                                         WHERE r.attackerId = :id OR r.defenderId =:id 
+                                                         ORDER BY r.date DESC");
         } catch (DBALException $e) {
         }
         $statement->bindValue('id', $id);
         $statement->execute();
         $results = $statement->fetchAll();
-
         return $results;
 
 

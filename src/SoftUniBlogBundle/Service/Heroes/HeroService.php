@@ -106,4 +106,9 @@ class HeroService implements HeroServiceInterface
     {
         return $this->heroRepository->findAllDamagedHeroes();
     }
+
+    public function findAll()
+    {
+        return $this->heroRepository->findAll();
+    }
 }

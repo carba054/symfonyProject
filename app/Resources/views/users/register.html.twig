@@ -5,19 +5,29 @@
 {% block main %}
     <div class="container body-content span=8 offset=2">
         <div class="well">
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <div class="alert alert-warning" >
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
             <form class="form-horizontal" action="{{ path('user_register') }}" method="post">
                 <fieldset>
                     <legend>Register</legend>
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="user_email">Email</label>
                         <div class="col-sm-4 ">
-                            <input class="form-control" id="user_email" placeholder="Email" name="user[email]" required type="email">
+                            <input class="form-control" id="user_email" placeholder="Email" name="user[email]" required type="email" value="{% if request.user.email is defined %}{{ request.user.email }} {% endif %}">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-4 control-label" for="user_fullName">Full Name</label>
                         <div class="col-sm-4 ">
-                            <input type="text" class="form-control" id="user_fullName" placeholder="Full Name" name="user[fullName]" required>
+                            <input type="text" class="form-control" id="user_fullName" placeholder="Full Name" name="user[fullName]" required value="{% if request.user.fullName is defined %}{{ request.user.fullName }} {% endif %}">
                         </div>
                     </div>
                     <div class="form-group">

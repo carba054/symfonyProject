@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+{% block main %}
+    <div class="container body-content span=8 offset=2">
+        <div class="well">
+            <form class="form-horizontal" action="{{ path('add_magic') }}" method="POST">
+                <fieldset>
+                    {% for type, messages in app.session.flashbag.all() %}
+                        {% for message in messages %}
+                            <div class="alert alert-warning" id="info">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    <legend style="text-align: center">New Magic</legend>
+
+                    <div class="form-group">
+                        <label class="col-sm-12 " >Name:
+                            <input type="text"  name="magics[name]">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="col-sm-12">Percent Chance:
+                            <input  type="number" name="magics[percentChance]"  >
+                        </label>
+                    </div>
+                    <div>
+                        <label class="col-sm-12">Description:
+                            <input  type="text" name="magics[description]"  ><br>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="col-sm-12">Img:
+                            <input  type="text" name="magics[img]"  ><br>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="col-sm-12 " id="type">Types:<br>
+                            0(skill for defence)<input id="type0" type="radio" name="magics[type]" value="0" ><br>
+                            1(skill for attack)<input id="type1" type="radio" name="magics[type]" value="1" >
+                        </label>
+                    </div>
+                    <div class="type1">
+                        <label class="col-sm-12">DMG:
+                            <input  type="number" name="magics[dmg]"  value="0">
+                        </label>
+                    </div>
+                    <div class="type0">
+                        <label class="col-sm-12">ARMOR:
+                            <input  type="number" name="magics[armor]"  value="0">
+                        </label>
+                    </div>
+                    <div class="type0">
+                        <label class="col-sm-12">Percent DODGE:
+                            <input  type="number" name="magics[dodge]"  value="0">
+                        </label>
+                    </div>
+                    <div class="type1">
+                        <label class="col-sm-12">Percent Critical:
+                            <input  type="number" name="magics[critical]" value="0" >
+                        </label>
+                    </div>
+                    <div class="type0">
+                        <label class="col-sm-12">Heal:
+                            <input  type="number" name="magics[heal]"  value="0">
+                        </label>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+
+                </fieldset>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -10,6 +10,7 @@ interface HeroServiceInterface
 {
 
     public function findAllDamagedHeroes();
+    public function findAll();
     public function create(Hero $hero):bool ;
     public function edit(Hero $hero, $arrRequest=null):bool ;
     public function delete(Hero $hero):bool ;

@@ -39,9 +39,9 @@ class Magics
     /**
      * @var int
      *
-     * @ORM\Column(name="cooldown", type="integer")
+     * @ORM\Column(name="percentChance", type="integer")
      */
-    private $cooldown;
+    private $percentChance;
 
     /**
      * @var int
@@ -64,12 +64,6 @@ class Magics
      */
     private $heal;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="disarm", type="integer")
-     */
-    private $disarm;
 
     /**
      * @var string
@@ -79,11 +73,17 @@ class Magics
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255)
+     */
+    private $description;
+    /**
      * @var int
      *
-     * @ORM\Column(name="silence", type="integer")
+     * @ORM\Column(name="type", type="integer")
      */
-    private $silence;
+    private $type;
 
     /**
      * @var int
@@ -94,14 +94,27 @@ class Magics
 
     /**
      * @var ArrayCollection
-     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\Hero", mappedBy="magic")
+     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\Hero", mappedBy="magic", cascade={"remove"})
      */
     private $heroes;
 
-    private function __construct()
+
+    public function __construct($img, $dmg, $percentChance, $armor, $dodge, $heal, $name, $description, $type, $critical)
     {
         $this->heroes = new ArrayCollection();
+        $this->img = $img;
+        $this->dmg = $dmg;
+        $this->percentChance = $percentChance;
+        $this->armor = $armor;
+        $this->dodge = $dodge;
+        $this->heal = $heal;
+        $this->name = $name;
+        $this->description = $description;
+        $this->type = $type;
+        $this->critical = $critical;
     }
+
+
 
     /**
      * Get id
@@ -112,6 +125,25 @@ class Magics
     {
         return $this->id;
     }
+
+    /**
+     * @return int
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param int $type
+     * @return Magics
+     */
+    public function setType(int $type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
 
     /**
      * Set img
@@ -126,6 +158,27 @@ class Magics
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     * @return Magics
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+
 
     /**
      * Get img
@@ -164,25 +217,25 @@ class Magics
     /**
      * Set cooldown
      *
-     * @param integer $cooldown
+     * @param integer $percentChance
      *
      * @return Magics
      */
-    public function setCooldown($cooldown)
+    public function setPercentChance($percentChance)
     {
-        $this->cooldown = $cooldown;
+        $this->percentChance = $percentChance;
 
         return $this;
     }
 
     /**
-     * Get cooldown
+     * Get percentChance
      *
      * @return int
      */
-    public function getCooldown()
+    public function getPercentChance()
     {
-        return $this->cooldown;
+        return $this->percentChance;
     }
 
     /**
@@ -257,29 +310,6 @@ class Magics
         return $this->heal;
     }
 
-    /**
-     * Set disarm
-     *
-     * @param integer $disarm
-     *
-     * @return Magics
-     */
-    public function setDisarm($disarm)
-    {
-        $this->disarm = $disarm;
-
-        return $this;
-    }
-
-    /**
-     * Get disarm
-     *
-     * @return int
-     */
-    public function getDisarm()
-    {
-        return $this->disarm;
-    }
 
     /**
      * Set name
@@ -305,29 +335,6 @@ class Magics
         return $this->name;
     }
 
-    /**
-     * Set silence
-     *
-     * @param integer $silence
-     *
-     * @return Magics
-     */
-    public function setSilence($silence)
-    {
-        $this->silence = $silence;
-
-        return $this;
-    }
-
-    /**
-     * Get silence
-     *
-     * @return int
-     */
-    public function getSilence()
-    {
-        return $this->silence;
-    }
 
     /**
      * Set critical

@@ -38,7 +38,7 @@ class Types
 
     /**
      * @var ArrayCollection
-     * @ORM\OneToMany(targetEntity="SoftUniBlogBundle\Entity\Hero", mappedBy="typeId")
+     * @ORM\OneToMany(targetEntity="SoftUniBlogBundle\Entity\Hero", mappedBy="typeId", cascade={"remove"})
      */
     private $heroes;
 

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    {% for type, messages in app.session.flashbag.all() %}
+        {% for message in messages %}
+            <div class="alert alert-{% if type == 'warning' %}warning{% else %}success{% endif %}" id="info">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <form class="form-horizontal" action="{{ path('choose_magic') }}" method="POST">
+
+    {% for magic in magics %}
+
+        <img class="magic{{ magic.id }} magic" onclick="imgMagic({{ magic.id }})" src="{{ magic.img }}" >
+        <input class="magic{{ magic.id }} magic hidden" type="radio" name="hero[magics]" value="{{ magic.id }}" >
+
+    {% endfor %}
+        <footer>
+            <div class="pull-left" style="border:1px solid black; padding: 20px; border-radius: 20%; box-shadow: 5px 10px #888888; margin: 50px 0px 0px 35%;">
+                <input class="btn btn-success btn-xs" type="submit" name="submit" value="Save" style="margin-right: 40px">
+                <a class="btn btn-default btn-xs" href="{{ app.request.headers.get('referer') }}">back &raquo;</a>
+
+
+
+            </div>
+        </footer>
+    </form>
+
+{% endblock %}

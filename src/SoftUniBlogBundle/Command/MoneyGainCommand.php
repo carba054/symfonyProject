@@ -3,17 +3,14 @@
 
 namespace SoftUniBlogBundle\Command;
 
-
 use SoftUniBlogBundle\Entity\Hero;
 use SoftUniBlogBundle\Service\Heroes\HeroServiceInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Tests\Input\InputDefinitionTest;
 
-class HealthRegenCommand extends Command
+class MoneyGainCommand extends Command
 {
 
     /**
@@ -37,11 +34,11 @@ class HealthRegenCommand extends Command
     protected function configure()
     {
 
-       $this->setDefinition(
-           [
-                new InputArgument('is-cron',InputArgument::OPTIONAL,'Cron for update current health', true)
-           ]
-       );
+        $this->setDefinition(
+            [
+                new InputArgument('is-cron',InputArgument::OPTIONAL,'Cron for update heroes money', true)
+            ]
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -55,10 +52,10 @@ class HealthRegenCommand extends Command
              * @var Hero $hero
              */
             $hero = $this->heroService->findOneById($heroArr['id']);
-            $hero->setCurrentHealth($hero->getCurrentHealth()+10);
+            $hero->setMoney($hero->getMoney()+50+$hero->getBonusMoney());
 
             if ($this->heroService->edit($hero)){
-                $output->writeln('The heroes are updated!');
+                $output->writeln('The money are updated!');
             };
         }
 
@@ -69,8 +66,7 @@ class HealthRegenCommand extends Command
 
     public function getName()
     {
-        return 'update:currentHealth';
+        return 'update:Money';
     }
-
 
 }

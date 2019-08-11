@@ -39,35 +39,35 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <th>Round 1:</th>
+                    <th class="w3-border-right">1:</th>
                     <td>{{ report.round1 }}</td>
                 </tr>
                 <tr>
-                    <th>Round 2:</th>
+                    <th class="w3-border-right">2:</th>
                     <td>{{ report.round2 }}</td>
                 </tr>
                 <tr>
-                    <th>Round 3:</th>
+                    <th class="w3-border-right">3:</th>
                     <td>{{ report.round3 }}</td>
                 </tr>
                 <tr>
-                    <th>Round 4:</th>
+                    <th class="w3-border-right">4:</th>
                     <td>{{ report.round4 }}</td>
                 </tr>
                 <tr>
-                    <th>Round 5:</th>
+                    <th class="w3-border-right">5:</th>
                     <td>{{ report.round5 }}</td>
                 </tr>
                 <tr>
-                    <th>Round 6:</th>
+                    <th class="w3-border-right">6:</th>
                     <td>{{ report.round6 }}</td>
                 </tr>
                 <tr>
-                    <th>Round 7:</th>
+                    <th class="w3-border-right">7:</th>
                     <td>{{ report.round7 }}</td>
                 </tr>
                 <tr>
-                    <th>Winner :</th>
+                    <th class="w3-border-right">Winner:</th>
                     <td>{% if report.winner is not null and report.winner == report.attackerId.id %}The winner is {{ report.attackerId.name }}!{% elseif report.winner == report.defenderId.id %}The winner is {{ report.defenderId.name }}!{% else %}There is no winner!{% endif %}</td>
                 </tr>
 

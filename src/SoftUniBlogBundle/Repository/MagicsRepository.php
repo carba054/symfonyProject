@@ -8,6 +8,7 @@ use SoftUniBlogBundle\Entity\Hero;
 use SoftUniBlogBundle\Entity\Magics;
 use SoftUniBlogBundle\Entity\Role;
 use SoftUniBlogBundle\Entity\Types;
+use Doctrine\ORM\OptimisticLockException;
 /**
  * MagicsRepository
  *
@@ -24,5 +25,34 @@ class MagicsRepository extends \Doctrine\ORM\EntityRepository
                 new Mapping\ClassMetadata(Magics::class) :
                 $metaData
         );
+    }
+
+    public function insert(Magics $magics){
+
+        try {
+            $this->_em->persist($magics);
+
+            $this->_em->flush();
+
+            return true;
+        } catch (OptimisticLockException $e) {
+
+            return false;
+        }
+
+    }
+    public function findUnusedMagics($heroId)
+    {
+
+        $em = $this->getEntityManager();
+        $connection = $em->getConnection();
+        $statement = null;
+        $statement = $connection->prepare("SELECT m.* FROM magics AS m  WHERE m.id NOT in (
+        select mh.magic_id from heroes_magics AS mh where mh.hero_id = :id)");
+        $statement->bindValue('id', $heroId);
+        $statement->execute();
+        $results = $statement->fetchAll();
+
+        return $results;
     }
 }

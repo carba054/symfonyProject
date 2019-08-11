@@ -33,6 +33,18 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li>
+                                <a href="{{ path('add_magic') }}" class="navbar-brand">
+                                    add Magic
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('users_view') }}" class="navbar-brand">
+                                    Users
+                                </a>
+                            </li>
+                        {% endif %}
                         {% if app.user %}
                         <li>
                             <a href="{{ path('user_profile') }}" class="navbar-brand">
@@ -51,7 +63,7 @@
                             </a>
                         </li>
 
-                            {% else %}
+                            {% elseif is_granted('ROLE_USER')%}
                         <li>
                             <a href="{{ path('hero_create') }}" class="navbar-brand">
                                 Create Hero

@@ -33,29 +33,13 @@ class SecurityController extends Controller
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
-
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig');
+        //var_dump($error);
+        return $this->render('security/login.html.twig', ['name'=>$lastUsername, 'error'=>$error]);
     }
 
-
-    /**
-     * @Route("/edit",name="edit")
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function editProfile(AuthenticationUtils $authenticationUtils){
-
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
-
-        return $this->render('security/edit.html.twig',[
-            'form' => $this->createForm(UserType::class)->createView(),
-            'user' => $user]);
-    }
 
 
 }

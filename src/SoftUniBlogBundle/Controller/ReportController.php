@@ -4,6 +4,7 @@
 namespace SoftUniBlogBundle\Controller;
 
 
+use SoftUniBlogBundle\Entity\Magics;
 use SoftUniBlogBundle\Service\Heroes\HeroServiceInterface;
 use SoftUniBlogBundle\Service\Magics\MagicServiceInterface;
 use SoftUniBlogBundle\Service\Reports\ReportServiceInterface;
@@ -86,100 +87,170 @@ class ReportController extends Controller
 
     }
 
+    public function chanceForMagic(Hero $hero, $type)
+    {
+        if ($hero->getMagics() != null) {
+            foreach ($hero->getMagics() as $magicId) {
+                /**
+                 * @var Magics $magic
+                 */
+                $magic = $this->magicService->findOneById($magicId);
+                $typeMagic = $magic->getType();
+                $percentChance = $magic->getPercentChance();
+
+                $chance = rand(0, 100);
+                if ($percentChance >= $chance && $typeMagic == $type) {
+                    return $magic;
+                }
+            }
+        }
+        return null;
+    }
+
 
     public function attackProcess(Hero $attacker,Hero $defender)
     {
         $reports = [];
-        $attackerDmg = $attacker->getDmg();
+
         $attackerArmor = $attacker->getArmor();
         $attackerHealth = $attacker->getCurrentHealth();
-        $attackerMiss = $attacker->getMiss();
-        //$attackerDisarm = $attacker->getDisarm();
-        $attackerMoney = $attacker->getMoney();
-
-        $defenderDmg = $defender->getDmg();
         $defenderArmor = $defender->getArmor();
         $defenderHealth = $defender->getCurrentHealth();
-        $defenderMiss = $defender->getMiss();
-        //$defenderDisarm = $defender->getDisarm();
-        $defenderMoney = $defender->getMoney();
 
-
-        $attackerCurrentArmor = $attackerArmor;
-        $attackerCurrentHealth = $attackerHealth;
-
-        $defenderCurrentArmor = $defenderArmor;
-        $defenderCurrentHealth = $defenderHealth;
         $winner = null;
         $loser = null;
-        $roundReport = '';
         for ($i = 1; $i<= 7; $i++){
-
+            $defenderDmg = $defender->getDmg();
+            $attackerDmg = $attacker->getDmg();
+            $attackerMiss = $attacker->getMiss();
+            $defenderMiss = $defender->getMiss();
+            $roundReport = '';
             if ($i%2 == 0){
-                if ($attackerCurrentArmor >0){
-                    $attackerCurrentArmor -= $defenderDmg;
-                    if ($attackerCurrentArmor < 0){
-                        $attackerCurrentHealth -= abs($attackerCurrentArmor);
-                        if ($attackerCurrentHealth < 0){
-                            $attackerCurrentHealth =0;
-                            $winner = $defender->getId();
-                            $loser = $attacker->getId();
-                            $roundReport = "The attacker take $defenderDmg DMG and left with 0 armor and 0 health";
-
-                        }else{
-                            $roundReport = "The attacker take $defenderDmg DMG and left with 0 armor and $attackerCurrentHealth health";
-                        }
-
+                $attackerMagic = $this->chanceForMagic($attacker, 0);
+                $defenderMagic = $this->chanceForMagic($defender, 1);
+                if ($defenderMagic != null){
+                    $defenderCrit = $defenderMagic->getCritical();
+                    $roundReport .= "Defender activated magic (".$defenderMagic->getName().'). ';
+                    $chance = rand(0,100);
+                    if ($defenderCrit >= $chance){
+                        $roundReport .= "CRITICAL! ";
+                        $defenderDmg += $defenderMagic->getDmg()*2;
                     }else{
-                        $roundReport = "The attacker take $defenderDmg DMG and left with $attackerCurrentArmor armor ";
-                    }
-                }else{
-                    $attackerCurrentHealth -= $defenderDmg;
-                    if ($attackerCurrentHealth <=0){
-                        $attackerCurrentHealth = 0;
-                        $roundReport = "The attacker lose the battle";
-                        $winner = $defender->getId();
-                        $loser = $attacker->getId();
-
-                    }else{
-                        $roundReport = "The attacker take $defenderDmg DMG and left with 0 armor and $attackerCurrentHealth health";
+                        $defenderDmg += $defenderMagic->getDmg();
                     }
                 }
-
-            }else{
-                if ($defenderCurrentArmor >0){
-                    $defenderCurrentArmor -= $attackerDmg;
-                    if ($defenderCurrentArmor < 0){
-                        $defenderCurrentHealth -= abs($defenderCurrentArmor);
-                        if ($defenderCurrentHealth < 0){
-                            $defenderCurrentHealth =0;
-                            $winner = $attacker->getId();
-                            $loser =$defender->getId();
-                            $roundReport = "The defender take $attackerDmg DMG and left with 0 armor and 0 health";
-
-                        }else{
-                            $roundReport = "The defender take $attackerDmg DMG and left with 0 armor and $defenderCurrentHealth health";
-                        }
-
+                if ($attackerMagic != null){
+                    $attackerMiss += $attackerMagic->getDodge();
+                    if ($attackerHealth+$attackerMagic->getHeal() > $attacker->getMaxHealth()){
+                        $attackerHealth = $attacker->getMaxHealth();
                     }else{
-                        $roundReport = "The defender take $attackerDmg DMG and left with $defenderCurrentArmor armor ";
+                        $attackerHealth += $attackerMagic->getHeal();
+
+                    }
+
+                    $attackerArmor += $attackerMagic->getArmor();
+                    $roundReport .= "Attacker activated magic (".$attackerMagic->getName().'). ';
+                    $chance = rand(0,100);
+                    if ($attackerMiss >= $chance){
+                        $roundReport .= "The defender missed! ";
+                        $reports['round'.$i] = $roundReport;
+                        continue;
+                    }
+
+                }
+                if ($attackerArmor >0){
+                    $attackerArmor -= $defenderDmg;
+                    if ($attackerArmor < 0){
+                        $attackerHealth -= abs($attackerArmor);
+                        if ($attackerHealth < 0){
+                            $attackerHealth =0;
+                            $stolenMoney = $attacker->getMoney()*0.1;
+                            $winner = $defender;
+                            $loser = $attacker;
+                            $roundReport .= "The attacker lose the battle and $stolenMoney money";
+                        }else{
+                            $roundReport .= "The attacker take $defenderDmg DMG and left with 0 armor and $attackerHealth health";
+                        }
+                    }else{
+                        $roundReport .= "The attacker take $defenderDmg DMG and left with $attackerArmor armor ";
                     }
                 }else{
-                    $defenderCurrentHealth -= $attackerDmg;
-                    if ($defenderCurrentHealth <=0){
-                        $defenderCurrentHealth = 0;
-                        $roundReport = "The defender lose the battle";
-                        $winner = $attacker->getId();
-                        $loser = $defender->getId();
-
+                    $attackerHealth -= $defenderDmg;
+                    if ($attackerHealth <=0){
+                        $attackerHealth = 0;
+                        $stolenMoney = $attacker->getMoney()*0.1;
+                        $winner = $defender;
+                        $loser = $attacker;
+                        $roundReport .= "The attacker lose the battle and $stolenMoney money";
                     }else{
-                        $roundReport = "The defender take $attackerDmg DMG and left with 0 armor and $defenderCurrentHealth health";
+                        $roundReport .= "The attacker take $defenderDmg DMG and left with 0 armor and $attackerHealth health";
+                    }
+                }
+            }else{
+                $attackerMagic = $this->chanceForMagic($attacker, 1);
+                $defenderMagic = $this->chanceForMagic($defender, 0);
+                if ($attackerMagic != null){
+                    $attackerCrit = $attackerMagic->getCritical();
+                    $roundReport .= "Attacker activated magic (".$attackerMagic->getName().'). ';
+                    $chance = rand(0,100);
+                    if ($attackerCrit >= $chance){
+                        $roundReport .= "CRITICAL! ";
+                        $attackerDmg += $attackerMagic->getDmg()*2;
+                    }else{
+                        $attackerDmg += $attackerMagic->getDmg();
+                    }
+
+
+                }
+                if ($defenderMagic != null){
+                    $defenderMiss += $defenderMagic->getDodge();
+                    if ($defenderHealth+$defenderMagic->getHeal() > $defender->getMaxHealth()){
+                        $defenderHealth = $defender->getMaxHealth();
+                    }else{
+                        $defenderHealth += $defenderMagic->getHeal();
+                    }
+                    $defenderArmor += $defenderMagic->getArmor();
+                    $chance = rand(0,100);
+                    $roundReport .= "Defender activated magic (".$defenderMagic->getName()."). ";
+                    if ($defenderMiss >= $chance){
+                        $roundReport .= "The attacker missed! ";
+                        $reports['round'.$i] = $roundReport;
+                        continue;
+                    }
+
+                }
+                if ($defenderArmor >0){
+                    $defenderArmor -= $attackerDmg;
+                    if ($defenderArmor < 0){
+                        $defenderHealth -= abs($defenderArmor);
+                        if ($defenderHealth < 0){
+                            $defenderHealth =0;
+                            $stolenMoney = $defender->getMoney()*0.1;
+                            $winner = $attacker;
+                            $loser =$defender;
+                            $roundReport .= "The defender lose the battle and $stolenMoney money";
+                        }else{
+                            $roundReport .= "The defender take $attackerDmg DMG and left with 0 armor and $defenderHealth health";
+                        }
+                    }else{
+                        $roundReport .= "The defender take $attackerDmg DMG and left with $defenderArmor armor ";
+                    }
+                }else{
+                    $defenderHealth -= $attackerDmg;
+                    if ($defenderHealth <=0){
+                        $defenderHealth = 0;
+                        $stolenMoney = $defender->getMoney()*0.1;
+                        $winner = $attacker;
+                        $loser = $defender;
+                        $roundReport .= "The defender lose the battle and $stolenMoney money";
+                    }else{
+                        $roundReport .= "The defender take $attackerDmg DMG and left with 0 armor and $defenderHealth health";
                     }
                 }
             }
             $reports['round'.$i] = $roundReport;
-            $roundReport = null;
-            if ($attackerCurrentHealth <=0 || $defenderCurrentHealth <=0){
+
+            if ($attackerHealth <=0 || $defenderHealth <=0){
                 break;
             }
         }
@@ -187,38 +258,40 @@ class ReportController extends Controller
 
         $reports['attackerId'] = $attacker;
         $reports['defenderId'] = $defender;
-        $reports['winner'] = $winner;
+        $reports['winner'] = null;
+
 
         $report = new Reports($reports);
 
-        $report->setWinner($winner);
-        if ($this->reportService->save($report)){
+            $attacker->setCurrentHealth($attackerHealth);
+            $defender->setCurrentHealth($defenderHealth);
 
-            $attacker->setCurrentHealth($attackerCurrentHealth);
-            $defender->setCurrentHealth($defenderCurrentHealth);
+        if ($winner != null){
+            $report->setWinner($winner->getId());
+            $winner->setWins($winner->getWins()+1);
+            $winner->setMoney($winner->getMoney()+$stolenMoney);
 
-            if ($winner != null){
-                $updateWins = $this->heroService->findOneById($winner);
-                $updateWins->setWins($updateWins->getWins()+1);
+            $loser->setLosses($loser->getLosses()+1);
+            $loser->setExperience(2);
+            $loser->setMoney($loser->getMoney()-$stolenMoney);
 
-                $updatelosses = $this->heroService->findOneById($loser);
-                $updatelosses->setLosses($updatelosses->getLosses()+1);
-            }else{
-                $updateDraws = $this->heroService->findOneById($attacker->getId());
-                $updateDraws->setDraws($updateDraws->getDraws()+1);
+            $this->heroService->updateFight($winner);
+            $this->heroService->updateFight($loser);
+        }else{
+            $attacker->setDraws($attacker->getDraws()+1);
+            $attacker->setExperience(1);
 
-                $updateDraws = $this->heroService->findOneById($defender->getId());
-                $updateDraws->setDraws($updateDraws->getDraws()+1);
-            }
+            $defender->setDraws($defender->getDraws()+1);
+            $defender->setExperience(1);
+
             $this->heroService->updateFight($attacker);
             $this->heroService->updateFight($defender);
+        }
 
+            $this->reportService->save($report);
             return $report;
 
-        };
-
-
-        return null;
+        //};
     }
 
     /**
@@ -233,6 +306,7 @@ class ReportController extends Controller
         /**
          * @var Hero $hero
          */
+
         $hero = $this->userService->currentUser()->getHero();
 
         $reports = $this->reportService->findAll($hero->getId());

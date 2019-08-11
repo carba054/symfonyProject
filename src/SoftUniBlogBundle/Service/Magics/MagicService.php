@@ -30,4 +30,14 @@ class MagicService implements MagicServiceInterface
     {
         return $this->magicRepository->findAll();
     }
+
+    public function findUnusedMagics($heroId)
+    {
+        return $this->magicRepository->findUnusedMagics($heroId);
+    }
+
+    public function save($magic)
+    {
+        return $this->magicRepository->insert($magic);
+    }
 }

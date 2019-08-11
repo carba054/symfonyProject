@@ -5,6 +5,7 @@ namespace SoftUniBlogBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -14,6 +15,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
+
+    const NAME_MIN_LENGTH = 4;
+    const NAME_MAX_LENGTH = 100;
+    const PASSWORD_MIN_LENGTH = 6;
+    const PASSWORD_MAX_LENGTH = 100;
     /**
      * @var int
      *
@@ -38,6 +44,7 @@ class User implements UserInterface
     private $password;
 
     /**
+
      * @var string
      *
      * @ORM\Column(name="fullName", type="string", length=255)
@@ -48,7 +55,7 @@ class User implements UserInterface
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\Role")
+     * @ORM\ManyToMany(targetEntity="SoftUniBlogBundle\Entity\Role", cascade={"persist"})
      * @ORM\JoinTable(name="users_roles",
      *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")})
@@ -57,7 +64,7 @@ class User implements UserInterface
     private $roles;
 
     /**
-     * @ORM\OneToOne(targetEntity="SoftUniBlogBundle\Entity\Hero")
+     * @ORM\OneToOne(targetEntity="SoftUniBlogBundle\Entity\Hero", cascade={"remove"})
      */
     private $hero;
 
@@ -100,9 +107,13 @@ class User implements UserInterface
      * @param string $email
      *
      * @return User
+     * @throws \Exception
      */
     public function setEmail($email)
     {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL === false)){
+            throw new \Exception('Please set valid Email!');
+        }
         $this->email = $email;
 
         return $this;
@@ -124,9 +135,13 @@ class User implements UserInterface
      * @param string $password
      *
      * @return User
+     * @throws \Exception
      */
     public function setPassword($password)
     {
+        if (strlen($password) < self::PASSWORD_MIN_LENGTH || strlen($password) > self::PASSWORD_MAX_LENGTH) {
+            throw new \Exception('Password length must be between '.self::PASSWORD_MIN_LENGTH.' and '.self::PASSWORD_MAX_LENGTH.' symbols!');
+        }
         $this->password = $password;
 
         return $this;
@@ -148,9 +163,13 @@ class User implements UserInterface
      * @param string $fullName
      *
      * @return User
+     * @throws \Exception
      */
     public function setFullName($fullName)
     {
+        if (strlen($fullName) < self::NAME_MIN_LENGTH || strlen($fullName) > self::NAME_MAX_LENGTH){
+            throw new \Exception('Full Name length must be between '.self::NAME_MIN_LENGTH.' and '.self::NAME_MAX_LENGTH);
+        }
         $this->fullName = $fullName;
 
         return $this;

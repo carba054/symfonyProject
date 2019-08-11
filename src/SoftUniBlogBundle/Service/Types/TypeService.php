@@ -29,7 +29,6 @@ class TypeService implements TypeServiceInterface
     public function findOneById(int $id): ?Types
     {
 
-
         return $this->typeRepository->find($id);
 
     }

@@ -52,16 +52,15 @@ class UserService implements UserServiceInterface
     public function save(User $user): bool
     {
 
-
         $passwordHash =
            $this->encryptionService->hash($user->getPassword());
         $user->setPassword($passwordHash);
 
         $userRole = $this->roleService->findOneBy("ROLE_USER");
 
-
-        $user->addRole($userRole);
-
+        if ($user->getRoles() == null){
+            $user->addRole($userRole);
+        }
 
 
         return $this->userRepository->insert($user);
@@ -94,5 +93,10 @@ class UserService implements UserServiceInterface
     {
 
        return $this->security->getUser();
+    }
+
+    public function findAll()
+    {
+        return $this->userRepository->findAll();
     }
 }

@@ -31,13 +31,12 @@
                     <h2>
                         Type:{{ hero.typeId.name }}
                     </h2>
-
-                    <h2>
                         Magics:
                         {% for magic in magics %}
                             <img src="{{ magic.img }}" width="50px" height="50px">
                         {% endfor %}
-                    </h2>
+                        {% if hero.level >  magics|length %} <a href="{{ path('choose_magic') }}">add New Magic</a> {% endif %}
+
                     <h2>
                         Money: <span class="money">{{ hero.money }}</span>
                     </h2>
@@ -69,27 +68,6 @@
                                 </tr>
                             </tbody>
                         </table>
-
-{#                        <span>#}
-{#                            Strength: {{ hero.strength }}#}
-{#                        </span>#}
-{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
-{#                        <span>#}
-{#                            Agility: {{ hero.agility }}#}
-{#                        </span>#}
-{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
-{#                        <span>#}
-{#                            Intelligence: {{ hero.intelligence }}#}
-{#                        </span>#}
-{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
-{#                        <span>#}
-{#                            Luck: {{ hero.luck }}#}
-{#                        </span>#}
-{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
-{#                        <span>#}
-{#                            Health: {{ hero.maxHealth }}#}
-{#                        </span>#}
-{#                        <input class="btn btn-success btn-xs" type="submit" value="Save" style="margin-right: 40px"><br>#}
                         <small class="owner">
                             Owner:{{ hero.ownerId.fullName }}
                         </small>
@@ -107,7 +85,7 @@
                 <h2>DMG: {{ hero.dmg }}</h2>
                 <h2>Armor: {{ hero.armor }}</h2>
                 <h2>Miss: {{ hero.miss }}</h2>
-                <h2>Disarm: {{ hero.disarm }}</h2>
+                <h2>Bonus Money: {{ hero.bonusMoney }}</h2>
 
             </div>
 
